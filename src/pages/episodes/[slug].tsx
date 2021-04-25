@@ -1,4 +1,5 @@
 import { GetStaticPaths, GetStaticProps } from "next";
+import { Head } from "next/document";
 import { format, parseISO } from "date-fns";
 import { api } from "../../services/api";
 import { convertDurationToTimeString } from "../../utils/convertDurationToTimeString2";
@@ -9,6 +10,8 @@ import Link from "next/link";
 import styles from "./episode.module.scss";
 
 import ptBR from "date-fns/locale/pt-BR";
+import { usePlayer } from "../../contexts/PlayerContext";
+import React from "react";
 
 type Episode = {
   id: string;
@@ -27,8 +30,13 @@ type EpisodeProps = {
 };
 
 export default function Episode({ episode }: EpisodeProps) {
+  const { play } = usePlayer();
+
   return (
     <div className={styles.episode}>
+      <Head>
+        <title>{episode.title}</title>
+      </Head>
       <div className={styles.thumbnailContainer}>
         <Link href="/">
           <button type="button">
@@ -41,7 +49,7 @@ export default function Episode({ episode }: EpisodeProps) {
           src={episode.thumbnail}
           objectFit="cover"
         />
-        <button>
+        <button type="button" onClick={() => play(episode)}>
           <img src="/play.svg" alt="Tocar Episódio" />
         </button>
       </div>
@@ -110,3 +118,6 @@ export const getStaticProps: GetStaticProps = async (ctx) => {
     revalidate: 60 * 60 * 24,
   };
 };
+function play(episode: Episode): void {
+  throw new Error("Function not implemented.");
+}
